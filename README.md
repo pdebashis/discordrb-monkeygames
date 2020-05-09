@@ -1,6 +1,6 @@
-# gemstone
+# DOTA3 
 
-This is created using a template for a modular [Discord](https://discordapp.com/) chat bot using z64's [gemstone](https://github.com/z64/gemstone) which uses meew0's [discordrb](https://github.com/meew0/discordrb).
+This is a [Discord](https://discordapp.com/) chat bot interactie game using z64's [gemstone](https://github.com/z64/gemstone) template.
 
 ## Configuring and running your bot
 
