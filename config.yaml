@@ -1,0 +1,15 @@
+---
+# Discord API client ID
+client_id:707336070718685215
+
+# Discord API client token
+token:NzA3MzM2MDcwNzE4Njg1MjE1.XrbEKA.1H9BDeozGhumftCywvxFr4MEk7M
+
+# Command prefix
+prefix:>
+
+# ID of bot owner
+owner:391862190732476420
+
+# game the bot is playing
+game:dota3
