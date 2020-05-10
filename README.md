@@ -1,6 +1,6 @@
 # DOTA3 
 
-This is a [Discord](https://discordapp.com/) chat bot interactie game using z64's [gemstone](https://github.com/z64/gemstone) template.
+This is a [Discord](https://discordapp.com/) chat bot interactive game using z64's [gemstone](https://github.com/z64/gemstone) template.
 
 ## Configuring and running your bot
 
