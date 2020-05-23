@@ -8,8 +8,8 @@ module Bot::DiscordCommands
 				embed.add_field name: "**information :**", value: "``\\info``"
 				embed.add_field name: "**ping :**", value: "``\\ping``"
 				embed.add_field name: "**cards againt humanity :**", value: "``\\cah``"
-				embed.add_field name: "**fuck marry kill**", value: "``\\fmk``"
-				embed.add_field name: "**dota3**", value: "``\\dota``"
+				embed.add_field name: "**fuck marry kill :**", value: "``\\fmk``"
+				embed.add_field name: "**dota3 :**", value: "``\\dota``"
 			end
 	  end
   end
