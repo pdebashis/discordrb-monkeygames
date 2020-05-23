@@ -4,7 +4,7 @@ module Bot::DiscordCommands
   module Ping
     extend Discordrb::Commands::CommandContainer
     command :ping do |_event|
-      'Pong! ```dota3 server is alive```'
+      'Pong!'
     end
   end
 end
