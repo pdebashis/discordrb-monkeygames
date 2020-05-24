@@ -4,27 +4,13 @@ module Bot
     module Game
       extend Discordrb::Commands::CommandContainer
       # Creates a new game
-      command(:cah) do |event|
+      command([:cardsagainsthumanity,:cah]) do |event|
         if Database::Game.owner(event.user.id)
           'You can only host one game at a time. '\
           'Use `\end` to end an active game that you host.'
         else
           # Create channels
           game_id = (Database::DB[:sqlite_sequence].where(name: 'games')&.first&.[](:seq) || 0) + 1
-          # channels = {
-          #   text: event.server.create_channel("game_#{game_id}", 0),
-          #   voice: event.server.create_channel("game_#{game_id}", 2)
-          # }
-
-          # permissions = Discordrb::Permissions.new
-          # permissions.can_read_messages = true
-          # permissions.can_connect       = true
-
-          # channels.each do |_, c|
-          #   c.define_overwrite(event.bot.profile, permissions, 0)
-          #   c.define_overwrite(event.user, permissions, 0)
-          #   c.define_overwrite(event.server.everyone_role, 0, permissions)
-          # end
 
           # Create game
           game = Database::Game.create(
@@ -106,14 +92,7 @@ module Bot
               next event << "Couldn't add #{u.display_name}.. (max players: 10)" if game.players.count >= 10
               game.add_player discord_id: u.id, discord_name: u.distinct, discord_nick: u.display_name
 
-              # TODO: Create Permissions template for this
-              # permissions = Discordrb::Permissions.new
-              # permissions.can_read_messages = true
-              # permissions.can_connect       = true
-              # [game.text_channel, game.voice_channel].each do |c|
-              #   c.define_overwrite(u, permissions, 0)
-              # end
-              event << "Added #{u.distinct} to your game!"
+              event << "Added #{u.display_name} to your game!"
             end
           end
           return
@@ -160,12 +139,12 @@ module Bot
 
         next 'You aren\'t hosting any active games.' if game.nil?
 
-        next 'You can\'t modify your expanions after a game has been started!' if game.started
+        next 'You can\'t modify your decks after a game has been started!' if game.started
 
         names = names.join(' ')
         if names.casecmp('all').zero?
           game.remove_all_expansion_pools
-          event << 'Removed all expansions from your current game.'
+          event << 'Removed all decks from your current game.'
           return
         end
 
@@ -173,10 +152,10 @@ module Bot
           expansion = Database::Expansion.find(Sequel.ilike(:name, name))
           pool = game.expansion_pools.find { |e| e.expansion == expansion }
           if pool
-            event << "Removed expansion: `#{expansion.name}`"
+            event << "Removed deck: `#{expansion.name}`"
             pool.destroy
           else
-            event << "Expansion not found: `#{expansion.name}`"
+            event << "Deck not found: `#{expansion.name}`"
           end
         end
         nil
@@ -218,7 +197,7 @@ module Bot
             return
           end
 
-          event << "The game `##{game.id}` has started!**"
+          event << "**The game `##{game.id}` has started!**"
           game.start!
           return
         end
@@ -230,7 +209,7 @@ module Bot
         game = Database::Game.find text_channel_id: event.channel.id
         next 'This isn\'t a channel with an active game..' if game.nil?
         game.end! if game.owner.discord_id == event.user.id
-        nil
+        "***Bye!***"
       end
     end
   end

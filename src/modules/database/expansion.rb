@@ -7,7 +7,7 @@ module Bot
 
       # Log creation
       def after_create
-        Discordrb::LOGGER.info("created expansion #{inspect}")
+        Discordrb::LOGGER.info("created deck #{inspect}")
       end
 
       # returns the total number of cards

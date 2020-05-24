@@ -77,7 +77,6 @@ module Bot
       # keep the Game for history and just clean
       # up the channels.
       def end!
-        players.map(&:reset_nick!)
         if winner.nil?
           destroy
         end

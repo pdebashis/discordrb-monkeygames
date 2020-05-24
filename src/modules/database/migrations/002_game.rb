@@ -9,6 +9,7 @@ Sequel.migration do
       foreign_key :winner_id, :players, on_delete: :set_null
       TrueClass :started, default: false
       Integer :max_points
+      Integer :server_id
       TrueClass :use_tts, default: false
     end
 
@@ -16,6 +17,7 @@ Sequel.migration do
       primary_key :id
       Integer :discord_id
       String :discord_name
+      String :discord_nick
       Integer :score, default: 0
       foreign_key :game_id, :games, on_delete: :cascade
     end
