@@ -8,7 +8,7 @@ module Bot
     Sequel.extension :migration
 
     # Connect to database
-    DB = Sequel.connect('sqlite://data/monkey_gamesv1.db')
+    DB = Sequel.connect('sqlite://data/monkey_gamesv1.1.db')
 
     # Run migrations
     Sequel::Migrator.run(DB, 'src/modules/database/migrations')

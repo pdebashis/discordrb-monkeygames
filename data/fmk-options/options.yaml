@@ -1,8 +1,0 @@
----
-default: 
-  - "Dog, Cat, Fish"
-  - "Teacher, Classmate, Friend"
-
-
-celebrity:
-  - "Elizabeth Olsen,Chloë Grace Moretz, Aubrey Plaza"

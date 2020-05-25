@@ -3,8 +3,8 @@ module Bot
     # Syncs expansions with db
     module Sync
       extend Discordrb::Commands::CommandContainer
-      command(:sync) do |event|
-        event.respond 'syncronizing cards, this may take a moment..'
+      command(:sync_cah) do |event|
+        event.respond 'syncronizing cards of humanity, this may take a moment..'
 
         # load from dah-cards submodule
         Dir.glob('data/dah-cards/*.yaml').each do |f|
@@ -17,7 +17,7 @@ module Bot
             if data['authors']
               expansion.update(authors: data['authors'].join(', '))
             else
-              expansion.update(authors: 'cah')
+              expansion.update(authors: 'online sourced')
             end
           end
 
@@ -45,6 +45,32 @@ module Bot
         end
         'sync complete'
       end
+
+      command(:sync_fmk) do |event|
+        event.respond 'syncronizing fuck,marry,kill data with server, this may take a moment..'
+        Dir.glob('data/fmk-cards/*.yaml').each do |f|
+          data = YAML.load_file(f)
+
+          
+
+          data.each do |x|
+            tag = x.first
+            x.last.each do |options|
+              exist = Database::FmkOption.find(options: options)
+              
+              unless exist
+                Database::FmkOption.create(
+                  options: options,
+                  tag: tag
+                )
+              end
+            end
+
+          end
+        end
+        'sync complete'
+      end
+
     end
   end
 end

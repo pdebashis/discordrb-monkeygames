@@ -24,6 +24,7 @@ Sequel.migration do
 
     create_table(:rounds) do
       primary_key :id
+      Integer :message_id, unique: true
       foreign_key :game_id, :games, on_delete: :cascade
       foreign_key :question_id, :questions, on_delete: :cascade
       foreign_key :czar_id, :players, on_delete: :set_null
@@ -42,6 +43,12 @@ Sequel.migration do
       foreign_key :player_card_id, :player_cards, on_delete: :cascade
       foreign_key :round_id, :rounds, on_delete: :cascade
     end
+
+    create_table(:expansion_pools) do
+      primary_key :id
+      foreign_key :game_id, :games, on_delete: :cascade
+      foreign_key :expansion_id, :expansions, on_delete: :cascade
+    end
   end
 
   down do
@@ -50,5 +57,6 @@ Sequel.migration do
     drop_table(:rounds)
     drop_table(:player_cards)
     drop_table(:plays)
+    drop_table(:expansion_pools)
   end
 end
