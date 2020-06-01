@@ -36,7 +36,10 @@ module Bot
           event.user.await(:choices) do |choices_event|
             f,m,k = choices_event.message.content.split(",").map(&:to_i)
 
-            choices_event.respond("Didnt Choose Valid options!") unless valid(f,m,k)
+            if !valid(f,m,k)
+              choices_event.respond("Didnt Choose Valid options!") 
+              return
+            end
             
             option.update_f! f
             option.update_m! m

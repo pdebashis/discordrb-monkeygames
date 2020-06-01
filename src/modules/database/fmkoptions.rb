@@ -40,21 +40,25 @@ module Bot
       def get_sec_person
         if (f2 > m2 and f2 > k2)
           "fuck"
-        elsif m2 > k2
+        elsif k2 > m2
+            "kill"
+        else
             "marry"
+        end
+      end
+
+      def get_third_person
+        if (m3 > f3 and m3 > k3)
+          "marry"
+        elsif f3 > k3
+            "fuck"
         else
             "kill"
         end
       end
 
-      def get_third_person
-        if (f3 > m3 and f3 > k3)
-          "fuck"
-        elsif m3 > k3
-            "marry"
-        else
-            "kill"
-        end
+      def bolden(word)
+        "**#{word}**"
       end
 
       def stats
@@ -63,12 +67,12 @@ module Bot
         embed.color = 44783
         
         a = get_first_person
-        b = get_sec_person
+        b = get_sec_person 
         c = get_third_person
         
         pref = [a,b,c]
 
-        ladder = names.split(",").join("\n")
+        ladder = names.split(",").map{|x| bolden(x)}.join("\n")
 
         embed.add_field name: '#', value: ladder, inline: true
         embed.add_field name: 'Preference', value: pref.join("\n"), inline: true
