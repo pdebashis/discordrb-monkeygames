@@ -55,13 +55,20 @@ module Bot
 
           data.each do |x|
             tag = x.first
+            fmk_tag = Database::FmkTag.find(name: tag)
+            
+            if fmk_tag.nil?
+              fmk_tag = Database::FmkTag.create(name: tag)
+            end
+
             x.last.each do |options|
-              exist = Database::FmkOption.find(options: options)
               
-              unless exist
+              exist_option = Database::FmkOption.find(names: options)
+
+              unless exist_option
                 Database::FmkOption.create(
-                  options: options,
-                  tag: tag
+                  names: options,
+                  fmk_tag: fmk_tag
                 )
               end
             end

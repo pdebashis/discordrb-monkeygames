@@ -4,29 +4,53 @@ module Bot
     module Fmk
       extend Discordrb::Commands::CommandContainer
       # Creates a new game
+
+            def self.valid(f,m,k)
+              if ([1,2,3].include?(f) && [1,2,3].include?(m) && [1,2,3].include?(k))
+                return true if f+m+k == 6
+              end
+            return false
+           end
+
       command(:fmk) do |event,tag|
 
-        tag = Database::FmkOption.all
-                                .collect { |e| e.tag }
+        tag = Database::FmkTag.all
+                                .collect { |e| e.name }
                                 .sample if tag.nil?
 
-        option = Database::FmkOption.where(Sequel.ilike(:tag, tag)).map(:options).sample
+        fmk_tag = Database::FmkTag.find(Sequel.ilike(:name, tag))
 
-        unless option.nil?
-          a,b,c = option.split(",")
-          event << "``#{a}``▫️``#{b}``▫️``#{c}``"
-          event << "Pick one of the above to fuck :eggplant:, one to marry :ring:, and one to kill :dagger:. Choose wisely!"
-          event << "***Answer using 1,2 and 3!***"
-          
-          event.user.await(:choices) do |choices_event|
-            f,m,k = choices_event.message.content.split(",")
-
-            choices_event.respond("Showing Overall Stats")
-          end
-        
+        if fmk_tag.nil?
+          'No such Tag'
           return
         end
-        'Under Construction'
+  
+        option = fmk_tag.fmk_options.sample
+
+        unless option.nil?
+          a,b,c = option.names.split(",")
+          event << "``#{a} (1)``▫️``#{b} (2)``▫️``#{c} (3)``"
+          event << "Pick one of the above to fuck :eggplant:, one to marry :ring:, and one to kill :dagger:. Choose wisely!"
+          event << "***Answer using 1,2 and 3!***"
+
+          event.user.await(:choices) do |choices_event|
+            f,m,k = choices_event.message.content.split(",").map(&:to_i)
+
+            choices_event.respond("Didnt Choose Valid options!") unless valid(f,m,k)
+            
+            option.update_f! f
+            option.update_m! m
+            option.update_k! k
+
+            event.channel.send_message(
+              "",
+              false,
+              option.stats
+            )
+          end
+          return
+        end
+        'Options Under Construction'
       end
    end
   end
