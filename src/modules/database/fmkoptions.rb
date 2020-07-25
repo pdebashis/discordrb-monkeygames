@@ -29,7 +29,7 @@ module Bot
 
       def get_first_person
         if (f1 > m1 and f1 > k1)
-          "fuck"
+          "date"
         elsif m1 > k1
             "marry"
         else
@@ -39,7 +39,7 @@ module Bot
 
       def get_sec_person
         if (f2 > m2 and f2 > k2)
-          "fuck"
+          "date"
         elsif k2 > m2
             "kill"
         else
@@ -51,7 +51,7 @@ module Bot
         if (m3 > f3 and m3 > k3)
           "marry"
         elsif f3 > k3
-            "fuck"
+            "date"
         else
             "kill"
         end

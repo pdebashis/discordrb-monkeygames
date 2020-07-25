@@ -30,26 +30,26 @@ module Bot
         unless option.nil?
           a,b,c = option.names.split(",")
           event << "``#{a} (1)``▫️``#{b} (2)``▫️``#{c} (3)``"
-          event << "Pick one of the above to fuck :eggplant:, one to marry :ring:, and one to kill :dagger:. Choose wisely!"
+          event << "Pick one of the above to date :eggplant:, one to marry :ring:, and one to kill :dagger:. Choose wisely!"
           event << "***Answer using 1,2 and 3!***"
 
           event.user.await(:choices) do |choices_event|
             f,m,k = choices_event.message.content.split(",").map(&:to_i)
 
             if !valid(f,m,k)
-              choices_event.respond("Didnt Choose Valid options!") 
-              return
-            end
+              choices_event.respond("Didnt Choose Valid options!")
+            else
             
-            option.update_f! f
-            option.update_m! m
-            option.update_k! k
+              option.update_f! f
+              option.update_m! m
+              option.update_k! k
 
-            event.channel.send_message(
-              "",
-              false,
-              option.stats
-            )
+              event.channel.send_message(
+                "",
+                false,
+                option.stats
+              )
+            end
           end
           return
         end
