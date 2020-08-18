@@ -5,12 +5,12 @@ module Bot
       extend Discordrb::Commands::CommandContainer
       # Creates a new game
 
-            def self.valid(f,m,k)
-              if ([1,2,3].include?(f) && [1,2,3].include?(m) && [1,2,3].include?(k))
-                return true if f+m+k == 6
-              end
-            return false
-           end
+      def self.valid(f,m,k)
+        if ([1,2,3].include?(f) && [1,2,3].include?(m) && [1,2,3].include?(k))
+          return true if f+m+k == 6
+        end
+        return false
+      end
 
       command(:fmk) do |event,tag|
 
