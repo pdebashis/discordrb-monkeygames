@@ -1,7 +1,7 @@
 module Bot
   module DiscordCommands
     # Commands to manage game creation and flow
-    module NotesToFuture
+    module RemindMe
       extend Discordrb::Commands::CommandContainer
       # Creates a new game
 
@@ -40,15 +40,8 @@ module Bot
 
           msg_event.respond ("Ok")
         end
-
-        # note = Database::Notes.create(
-        #   msg: msg_content
-        #   create_date:
-        #   send_date: 
-        # )
-        # note.save
         return
       end
-   end
+    end
   end
 end

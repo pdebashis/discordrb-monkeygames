@@ -1,7 +1,12 @@
 # Gems
+require 'rubygems'
+require 'bundler/setup'
 require 'discordrb'
 require 'ostruct'
+require 'date'
 require 'yaml'
+
+Bundler.require(:default)
 
 # The main bot module.
 module Bot
@@ -37,6 +42,9 @@ module Bot
 
   load_modules(:DiscordEvents, 'events')
   load_modules(:DiscordCommands, 'commands')
+
+
+  Scheduler.run(BOT)
 
   # Run the bot
   BOT.run
