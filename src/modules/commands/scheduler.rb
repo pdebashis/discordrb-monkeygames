@@ -4,7 +4,7 @@ module Bot
       scheduler = Rufus::Scheduler.new
       
     
-      scheduler.every('5s', overlap: false) do
+      scheduler.cron '0 10 * * *' do
         send_today=Database::Reminder.where(:message_date => (Date.today))
         data={}
         # 391862190732476420
