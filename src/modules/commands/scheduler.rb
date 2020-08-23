@@ -5,9 +5,9 @@ module Bot
       
     
       scheduler.cron '0 10 * * *' do
-        send_today=Database::Reminder.where(:message_date => (Date.today))
+      #scheduler.every '5s' do
+        send_today=Database::Reminder.where{Sequel[:message_date] < Date.today + 1}
         data={}
-        # 391862190732476420
         send_today.each do |pm_user|
           data['id']=pm_user.discord_id
           Discordrb::User.new(data,BOT).pm("Hi I am a bot. You have a message for yourself => " + pm_user.message_content)
