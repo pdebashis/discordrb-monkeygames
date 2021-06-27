@@ -45,18 +45,6 @@ module Bot
   `start` - start the game
   `end` - end the game
 
-  🙇 **As a player..**
-  1. Each round, I will direct-message you your cards.
-  2. Reply in our DM with `pick (a number)` to pick a card that you think fits the question best!
-  If a question has multiple answeusingrs, say `pick (number)` multiple times in the order you want
-  your cards to appear!
-  3. Wait for the Judge to pick the winning card
-  
-  👑 **As the Judge..**
-  1. Wait for other players to submit their choices.
-  I'll let you know when we've got all the cards we need!
-  2. Pick the card you think should win by saying `pick (a number)` in this channel!
-  
   🔰 **Need help? Questions? Problems?**
   Ask `codemonkey#2455`!
 
@@ -106,14 +94,14 @@ module Bot
 
         next 'You aren\'t hosting any active games.' if game.nil?
 
-        next 'You can\'t modify your expansions after a game has been started!' if game.started
+        next 'You can\'t modify your decks after a game has been started!' if game.started
 
         names = names.join(' ')
         if names.casecmp('all').zero?
           Database::Expansion.all.each do |e|
             game.add_expansion_pool expansion: e
           end
-          event << 'Added all available expansions to your current game.'
+          event << 'Added all available decks to your current game.'
           return
         end
 
@@ -121,13 +109,13 @@ module Bot
           expansion = Database::Expansion.find(Sequel.ilike(:name, name))
           unless expansion.nil?
             if game.expansion_pools.find { |e| e.expansion == expansion }
-              event << "Expansion `#{expansion.name}` is already in your game."
+              event << "Deck `#{expansion.name}` is already in your game."
             else
               game.add_expansion_pool expansion: expansion
-              event << "Added expansion: `#{expansion.name}`"
+              event << "Added deck: `#{expansion.name}`"
             end
           else
-            event << "Could not find expansion: `#{name}`"
+            event << "Could not find deck: `#{name}`"
           end
         end
         nil

@@ -1,4 +1,4 @@
-# DOTA3 
+# MONKEY GAMES
 
 This is a [Discord](https://discordapp.com/) chat bot interactive game using z64's [gemstone](https://github.com/z64/gemstone) template.
 
@@ -8,9 +8,11 @@ Make a copy of data/config-template.yaml and rename it to `config.yaml` *exactly
 
 Fill out each field provided to set up a minimal discord bot, with a few commands and an event to get you started.
 
-To run your bot, open your terminal and run `rake` in the top level folder of your bot. 
+To run your bot, open your terminal and run `rake` or `ruby run.rb` in the top level folder of your bot. 
 
 ```Example Run Script
+pid=`ps -ef | grep run.rb | grep -v grep | awk '{print $2}'`
+kill $pid
 while true
 do
   echo "updating from git.."
