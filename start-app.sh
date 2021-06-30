@@ -5,3 +5,4 @@ kill $pid
 
 sleep 2
 nohup ruby run.rb &
+#ruby run.rb

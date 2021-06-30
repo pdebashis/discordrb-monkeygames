@@ -47,7 +47,7 @@ module Bot
       end
 
       command(:sync_fmk) do |event|
-        event.respond 'syncronizing fuck,marry,kill data with server, this may take a moment..'
+        event.respond 'syncronizing date,marry,kill data with server, this may take a moment..'
         Dir.glob('data/fmk-cards/*.yaml').each do |f|
           data = YAML.load_file(f)
 
