@@ -64,5 +64,43 @@ module Bot::DiscordCommands
 		    event.channel.send_message "Oops, it didnt work..."
 		end
 	  end
+
+	command(:nist_export) do |event,batchquery|
+		members = event.channel.server.non_bot_members
+		output = "nickname,username,batch\n"
+		members.each do |member|
+			nick=member.display_name
+			usern=member.username	
+			if nick =~ / 20[0-9][0-9]/
+				batch = nick[-4..-1] 
+			else
+				batch = "unknown"
+			end
+			output+="#{nick},#{usern},#{batch}\n"
+		end
+
+		unless batchquery.nil?
+		    unless batchquery =~/20[0-9][0-9]/
+				event.channel.send_message "Something wrong in your command..."
+				raise "Command not parsed"
+			end 
+		    members = output.split("\n")
+			new_output = ""
+			members.each do |member|
+				new_output += "#{member}\n" if member.split(",").last == batchquery
+			end
+			output = new_output
+		end
+	    event.channel.send_message "Generating CSV..."
+		begin
+			o_fp = File.new( "/tmp/members.csv","w+")
+			o_fp.write(output)
+			o_fp.close
+		    event.channel.send_file File.open('/tmp/members.csv', 'r')
+		rescue
+			raise "Unable to create output file"
+		    event.channel.send_message "Oops, it didnt work..."
+		end
+  	end
   end
 end
