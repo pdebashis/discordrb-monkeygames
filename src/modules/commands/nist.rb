@@ -42,28 +42,13 @@ module Bot::DiscordCommands
 		end
 	  end
 
-	  command(:nist_others) do |event|
+	command(:nist_others) do |event|
 		users_nicks = event.channel.server.non_bot_members.map(&:display_name)
 		batchless = users_nicks.reject do |usr| 
 			/ 20[0-9][0-9]/ =~ usr
         end
-		event.channel.send_message "#{batchless}"
-	  end
-
-	  command(:nist_users) do |event|
-		users_nicks = event.channel.server.non_bot_members.map(&:display_name)
-		event.channel.send_message "Generating CSV..."
-		content=users_nicks.join("\n")
-		begin
-			o_fp = File.new( "/tmp/members.csv","w+")
-			o_fp.write(content)
-			o_fp.close
-		    event.channel.send_file File.open('/tmp/members.csv', 'r')
-		rescue
-			raise "Unable to create output file"
-		    event.channel.send_message "Oops, it didnt work..."
-		end
-	  end
+		event.channel.send_message "#{batchless.join("\n")}"
+	end
 
 	command(:nist_export) do |event,batchquery|
 		members = event.channel.server.non_bot_members
