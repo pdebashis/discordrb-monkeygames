@@ -36,7 +36,7 @@ module Bot
 
             description = ''
             options.each.with_index do |option, index|
-                description << "#{emojis[index]} #{option}\n"
+                description << "#{emojis[index]} `#{option}`\n"
             end
 
             message = event.channel.send_embed do |embed|

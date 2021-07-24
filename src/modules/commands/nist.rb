@@ -47,7 +47,7 @@ module Bot::DiscordCommands
 		batchless = users_nicks.reject do |usr| 
 			/ 20[0-9][0-9]/ =~ usr
         end
-		event.channel.send_message "#{batchless.join("\n")}"
+		event.channel.send_message "#{batchless}"
 	end
 
 	command(:nist_export) do |event,batchquery|
