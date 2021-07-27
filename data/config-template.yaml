@@ -2,8 +2,9 @@
 # Discord API client ID
 client_id:
 
-# Discord API client token
-token:
+# Discord and other API tokens
+token: 
+finnhub_token: 
 
 # Command prefix
 prefix:

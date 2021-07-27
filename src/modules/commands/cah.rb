@@ -4,7 +4,7 @@ module Bot
     module Game
       extend Discordrb::Commands::CommandContainer
       # Creates a new game
-      command([:cardsagainsthumanity,:cah]) do |event|
+      command(:cardsagainsthumanity, aliases: [:cah]) do |event|
         if Database::Game.owner(event.user.id)
           'You can only host one game at a time. '\
           'Use `\end` to end an active game that you host.'
