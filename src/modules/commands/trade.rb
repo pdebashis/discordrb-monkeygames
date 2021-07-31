@@ -2,17 +2,14 @@ module Bot::DiscordCommands
   module Help extend Discordrb::Commands::CommandContainer
 
     CONFIG = OpenStruct.new YAML.load_file 'data/config.yaml'
-    APIKEY=CONFIG.finnhub_token
+    APIKEY=CONFIG.twelvedata_token
     
       
-    FinnhubRuby.configure do |config|
-      config.api_key['api_key'] = APIKEY
-    end
 
-    fc = FinnhubRuby::DefaultApi.new
+    td_client = TwelvedataRuby.client(apikey: APIKEY, connect_timeout: 300)
 
-    def self.get_stock_price(fc, symbol)
-      fc.quote(symbol).pc
+    def self.get_price(price)
+      price.to_f
     end
 
     def self.invalid(event,args,size,command)
@@ -61,8 +58,8 @@ Ask `codemonkey#2455`!
           event.channel.send_message "Stop. Feature not implemented."
         when "show"
           return if invalid(event,args,2,"show <symbol>")
-          price = get_stock_price(fc, args[1])
-          if price.zero?
+          quote = td_client.quote(symbol: args[1]).parsed_body
+          if quote[:exchange].nil?
             event.channel.send_embed do |embed|
               embed.color = 'FF0000'
               embed.description = "An error occurred (the request to the service may have been unsuccessful)"
@@ -70,7 +67,8 @@ Ask `codemonkey#2455`!
           else
             event.channel.send_embed do |embed|
               embed.color = '008CFF'
-              embed.description = "#{price}"
+              embed.add_field name: "#{quote[:exchange]}", value: "#{quote[:name]}"
+              embed.add_field name: "Price", value: ":dollar: #{get_price(quote[:previous_close])}"
             end
           end
         when "buy"

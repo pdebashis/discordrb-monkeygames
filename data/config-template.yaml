@@ -4,7 +4,7 @@ client_id:
 
 # Discord and other API tokens
 token: 
-finnhub_token: 
+twelvedata_token:
 
 # Command prefix
 prefix:
