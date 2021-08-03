@@ -24,8 +24,6 @@ module Bot
 
       Bot::BOT.voice_state_update(from: not!(["Monkey Games","Rythm"])) do |event|
         voice = Bot::BOT.voice(event.server)
-        puts "Event Happened (#{voice})"
-        puts "But Ignored" if voice.nil?
         event.user.extend(UserTimeout)
         # Minute delay for the individual user switching, 15 seconds for any user, to prevent spamming
         if (!event.user.lastPlayed or Time.now - event.user.lastPlayed > 60) and Time.now - $lastPlayed > 15 and event.old_channel.nil? and !voice.nil?

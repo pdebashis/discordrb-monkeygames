@@ -2,6 +2,8 @@
 
 This is a [Discord](https://discordapp.com/) chat bot interactive game using z64's [gemstone](https://github.com/z64/gemstone) template.
 
+
+
 ## Configuring and running your bot
 
 Make a copy of data/config-template.yaml and rename it to `config.yaml` *exactly*.
@@ -10,24 +12,21 @@ Fill out each field provided to set up a minimal discord bot, with a few command
 
 To run your bot, open your terminal and run `rake` or `ruby run.rb` in the top level folder of your bot. 
 
-```Example Run Script
-pid=`ps -ef | grep run.rb | grep -v grep | awk '{print $2}'`
-kill $pid
-while true
-do
-  echo "updating from git.."
-  git pull
-
-  echo "running rubocop.."
-  rubocop src
-
-  echo "updating documentation.."
-  yardoc src
-
-  echo "starting bot.."
-  rake
-done
-```
+Additional Packages
+sudo yum install libsodium
+wget https://archive.mozilla.org/pub/opus/opus-1.2.1.tar.gz
+tar -xf opus-1.2.1.tar.gz
+cd opus-1.2.1/
+./configure
+make
+sudo make install
+mkdir -v -p /usr/local/bin/ffmpeg
+cd /usr/local/bin/ffmpeg
+wget https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-i686-static.tar.xz
+tar -v -xf ffmpeg-release-i686-static.tar.xz --strip-components=1
+rm -v -f ffmpeg-release-i686-static.tar.xz
+ln -snf /usr/local/bin/ffmpeg/ffmpeg /usr/bin/ffmpeg
+ln -snf /usr/local/bin/ffmpeg/ffpropbe /usr/bin/ffpropbe
 
 ## Generating docs
 
