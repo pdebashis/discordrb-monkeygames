@@ -55,7 +55,25 @@ Ask `codemonkey#2455`!
         when "daily"
           event.channel.send_message "Stop. Feature not implemented."
         when "search"
-          event.channel.send_message "Stop. Feature not implemented."
+          return if invalid(event,args,2,"show <symbol>")
+          quote = td_client.symbol_search(symbol: args[1]).parsed_body
+          if quote[:data].nil?
+            event.channel.send_embed do |embed|
+              embed.color = 'FF0000'
+              embed.description = "An error occurred (the request to the service may have been unsuccessful)"
+            end
+          else
+            size = quote[:data].size
+            desc = "\n"
+            quote[:data].each_with_index do |x,i|
+              desc = desc + x[:instrument_name] + "(`#{x[:exchange]}`:`#{x[:symbol]}`)\n" if i < 10
+            end
+            event.channel.send_embed do |embed|
+              embed.color = '008CFF'
+              embed.description = "#{size} matches found"
+              embed.add_field name: "Showing Top Search Results", value: desc
+            end
+          end
         when "show"
           return if invalid(event,args,2,"show <symbol>")
           quote = td_client.quote(symbol: args[1]).parsed_body

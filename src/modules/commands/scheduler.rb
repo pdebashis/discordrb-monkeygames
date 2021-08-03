@@ -1,7 +1,16 @@
 module Bot
   module Scheduler
+
+    Songs = {
+      "shuffle" => [
+        "tf1_detect_friend1.wav",
+    ],
+    "users name" => []
+  }
+
     def self.run(bot)
       scheduler = Rufus::Scheduler.new
+      $lastPlayed = Time.now - 50
   
       scheduler.every '1m' do
         send_today=Database::Reminder.where{Sequel[:message_date] < Time.now}
@@ -10,6 +19,26 @@ module Bot
           data['id']=pm_user.discord_id
           Discordrb::User.new(data,BOT).pm(":speech_balloon: | You have a message for yourself from the past \n`" + pm_user.message_content + "`")
           pm_user.destroy
+        end
+      end
+
+      Bot::BOT.voice_state_update(from: not!(["Monkey Games","Rythm"])) do |event|
+        voice = Bot::BOT.voice(event.server)
+        puts "Event Happened (#{voice})"
+        puts "But Ignored" if voice.nil?
+        event.user.extend(UserTimeout)
+        # Minute delay for the individual user switching, 15 seconds for any user, to prevent spamming
+        if (!event.user.lastPlayed or Time.now - event.user.lastPlayed > 60) and Time.now - $lastPlayed > 15 and event.old_channel.nil? and !voice.nil?
+          $lastPlayed = Time.now
+          event.user.lastPlayed = Time.now
+          voice = Bot::BOT.voice_connect(event.channel)
+          if Songs[event.user.name]
+            puts "going to play user based"
+            voice.play_file("sounds/#{Songs[event.user.name].sample}")
+          else
+            puts "going to play"
+            voice.play_file("sounds/#{Songs['shuffle'].sample}")
+          end
         end
       end
     end

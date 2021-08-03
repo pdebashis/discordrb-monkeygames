@@ -14,7 +14,7 @@ module Bot::DiscordCommands
 	  command(:nist_info) do |event|
 		event.channel.send_embed do |embed|
 		  embed.colour = 0xff8040
-		  embed.add_field name: "**Commands Available**\n", value: " **\\nist_info**    : Display this info\n**\\nist_stats**    : Get all batch counts\n **\\nist_others**    : Get users without batch info\n **\\nist_export [batch]** : Export users with username (with batch filter)\n**\\nist_poll {type} {survey} {option1} {option2} ...** : Create Poll\n\n **Poll Types** : \ncolors,shapes,numbers,letters,food,faces\n\n**\\\trade help**    : Display the trading help menu\n"
+		  embed.add_field name: "**Commands Available**\n", value: " **\\nist_info**    : Display this info\n**\\nist_stats**    : Get all batch counts\n **\\nist_others**    : Get users without batch info\n **\\nist_export [batch]** : Export users with username (with batch filter)\n**\\nist_poll {type} {survey} {option1} {option2} ...** : Create Poll\n\n **Poll Types** : \ncolors,shapes,numbers,letters,food,faces\n\n**\\trade help**    : Display the trading help menu\n"
 		  embed.thumbnail = Discordrb::Webhooks::EmbedThumbnail.new(
             url: 'https://cdn4.iconfinder.com/data/icons/school-subjects/256/Informatics-512.png'
           )

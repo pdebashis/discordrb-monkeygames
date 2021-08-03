@@ -45,7 +45,7 @@ module Bot
 
 
   Scheduler.run(BOT)
-
+  
   # Run the bot
   BOT.run
 end
