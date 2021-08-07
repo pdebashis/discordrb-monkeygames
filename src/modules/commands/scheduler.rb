@@ -3,7 +3,7 @@ module Bot
 
     Songs = {
       "shuffle" => [
-        "tf1_detect_friend1.wav",
+        "doom_time_to_paint_the_battlefield_red.mp3",
     ],
     "codemonkey" => ["doom_time_to_paint_the_battlefield_red.mp3"],
     "anantyash9" => ["pudge_make_room_for_pudge.mp3"],

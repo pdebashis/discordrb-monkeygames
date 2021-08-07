@@ -14,6 +14,16 @@ module Bot::DiscordCommands
         return
       end
 
+      command(:dc) do |event|
+        voice = Bot::BOT.voice(event.server)
+        if voice
+          voice.destroy
+        else
+          event.channel.send_message ":x: Bot is not connected to any channels"
+        end
+        return
+      end
+
       command(:play) do |event|
         sound_file = "sounds/pudge_make_room_for_pudge.mp3"
         unless ::File::exist?(sound_file)
@@ -36,5 +46,6 @@ module Bot::DiscordCommands
       voice.play_file(sound_file)
       Bot::BOT.voice_destroy(event.server) if to_disconnect
     end
+
   end
 end
