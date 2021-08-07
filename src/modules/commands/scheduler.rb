@@ -5,7 +5,10 @@ module Bot
       "shuffle" => [
         "tf1_detect_friend1.wav",
     ],
-    "users name" => []
+    "codemonkey" => ["doom_time_to_paint_the_battlefield_red.mp3"],
+    "anantyash9" => ["pudge_make_room_for_pudge.mp3"],
+    "sagarsethy" => ["zeus_make_your_offerrings.mp3"],
+    "AmarS1993" => ["juggernaut_ability_bladefury.mp3"]
   }
 
     def self.run(bot)
