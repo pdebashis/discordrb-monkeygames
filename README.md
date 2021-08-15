@@ -1,6 +1,7 @@
 # MONKEY GAMES
 
 This is a [Discord](https://discordapp.com/) chat bot interactive game using z64's [gemstone](https://github.com/z64/gemstone) template.
+[Invite](https://discord.com/oauth2/authorize?client_id=712347747000254524&scope=bot&permissions=1056832) the Bot to your server.
 
 
 ## Configuring and running your bot
@@ -56,5 +57,7 @@ ln -snf /usr/local/bin/ffmpeg/ffpropbe /usr/bin/ffpropbe
 
 \remind_me
 
+\poll
 
-## Support
+\jobs
+

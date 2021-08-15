@@ -2,13 +2,13 @@ module Bot
   module Scheduler
 
     Songs = {
-      "shuffle" => [
-        "doom_time_to_paint_the_battlefield_red.mp3",
-    ],
+      "shuffle" => [],
     "codemonkey" => ["doom_time_to_paint_the_battlefield_red.mp3"],
     "anantyash9" => ["pudge_make_room_for_pudge.mp3"],
     "sagarsethy" => ["zeus_make_your_offerrings.mp3"],
-    "AmarS1993" => ["juggernaut_ability_bladefury.mp3"]
+    "AmarS1993" => ["juggernaut_ability_bladefury.mp3"],
+    "Nemesis_23" => ["silencer_comes_to_war.mp3"],
+    "dharamx" => ["who_calls_the_crystal_maiden.mp3"]
   }
 
     def self.run(bot)
@@ -34,10 +34,8 @@ module Bot
           event.user.lastPlayed = Time.now
           voice = Bot::BOT.voice_connect(event.channel)
           if Songs[event.user.name]
-            puts "going to play user based"
             voice.play_file("sounds/#{Songs[event.user.name].sample}")
           else
-            puts "going to play"
             voice.play_file("sounds/#{Songs['shuffle'].sample}")
           end
         end
