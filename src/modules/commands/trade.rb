@@ -1,5 +1,6 @@
-module Bot::DiscordCommands
-  module Help extend Discordrb::Commands::CommandContainer
+module Bot
+  module DiscordCommands
+  module Trade extend Discordrb::Commands::CommandContainer
 
     CONFIG = OpenStruct.new YAML.load_file 'data/config.yaml'
     APIKEY=CONFIG.twelvedata_token
@@ -21,6 +22,16 @@ module Bot::DiscordCommands
         return true
       end
       false
+    end
+
+    def self.no_account(event,trader,msg)
+      return false if trader
+      msg.delete if msg
+      event.channel.send_embed do |embed|
+        embed.color = 'FF0000'
+        embed.description = "You have not initialized an Account!"
+      end
+      return true
     end
 
 
@@ -51,9 +62,57 @@ Ask `codemonkey#2455`!
 
       case args[0]
         when "init"
-          event.channel.send_message "Stop. Feature not implemented."
+          msgBot = event.channel.send_embed do |embed|
+            embed.color = 'FF8400'
+            embed.description = "Creating account..."
+          end
+          trader = Database::Trader.account(event.user.id)
+          initBal = 10000
+        
+          if (trader)
+            msgBot.delete
+            event.channel.send_embed do |embed|
+              embed.color = 'FF0000'
+              embed.description = "You have already initialized your account!"
+            end
+          else
+            account = Database::Trader.create(
+              discord_id: event.user.id,
+              discord_name: event.user.distinct,
+              server_id: event.server.id
+            )
+            msgBot.delete
+            event.channel.send_embed do |embed|
+              embed.color = '56C114'
+              embed.description = "Your account has been created!"
+            end
+          end
         when "daily"
-          event.channel.send_message "Stop. Feature not implemented."
+          trader = Database::Trader.account(event.user.id)
+          return if no_account(event,trader,nil)
+
+          money = trader.money
+          dailytime = trader.daily_time
+          now = Time.now.to_i
+          delay = 86400 - (now - dailytime)
+
+
+          if delay < 0
+            new_money = money + 1000
+            trader.update(money: new_money)
+            trader.update(daily_time: now)
+            event.channel.send_embed do |embed|
+              embed.color = '56C114'
+              embed.description = "You have received :moneybag: 1,000!!"
+            end
+          else
+            x = delay / 3600
+            y = (delay - x*3600) / 60
+            event.channel.send_embed do |embed|
+              embed.color = '56C114'
+              embed.description = "You are eligible for daily bonus after `#{x}h#{y}m`!!"
+            end
+          end
         when "search"
           return if invalid(event,args,2,"show <symbol>")
           quote = td_client.symbol_search(symbol: args[1]).parsed_body
@@ -96,15 +155,26 @@ Ask `codemonkey#2455`!
         when "close"
           event.channel.send_message "Stop. Feature not implemented."
         when "balance"
-          event.channel.send_message "Stop. Feature not implemented."
+          msgBot = event.channel.send_embed do |embed|
+            embed.color = 'FF8400'
+            embed.description = "Fetching account balance..."
+          end
+          trader = Database::Trader.account(event.user.id)
+          return if no_account(event,trader,msgBot)
+          msgBot.delete
+          event.channel.send_embed do |embed|
+            embed.color = '008CFF'
+            embed.add_field name: "Balance", value: ":dollar: #{trader.money}"
+          end
         when "list"
           event.channel.send_message "Stop. Feature not implemented."
         when "leaderboard"
           event.channel.send_message "Stop. Feature not implemented."
         else
-          "What?"
+          event.channel.send_message "What do you mean?"
       end
       return
     end
   end
+end
 end
