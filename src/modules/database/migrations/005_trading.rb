@@ -5,6 +5,7 @@ Sequel.migration do
         DateTime :timestamp
         Integer :discord_id
         String :discord_name
+        String :nick_name
         Integer :server_id
         Integer :money, default: 10000
         Integer :daily_time, default: 0

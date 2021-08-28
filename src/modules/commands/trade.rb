@@ -47,9 +47,10 @@ module Bot
 `\\trade show` -  get details about a symbol
 `\\trade buy/sell` - Create a trade by deducting amount and get trade ID
 `\\trade close` - Close a trade and credit the account
+`\\trade closeall` - Close all trades and credit the account
 `\\trade balance` - List the balance (accepts user argument)
 `\\trade list` - List the current trades (accepts user argument)
-`\\trade leaderboard` - View the richest on the server
+`\\trade top` - View the richest on the server
  
 🔰 **Need help? Questions? Problems?**
 Ask `codemonkey#2455`!
@@ -79,6 +80,7 @@ Ask `codemonkey#2455`!
             account = Database::Trader.create(
               discord_id: event.user.id,
               discord_name: event.user.distinct,
+              nick_name: event.user.display_name,
               server_id: event.server.id
             )
             msgBot.delete
@@ -96,14 +98,13 @@ Ask `codemonkey#2455`!
           now = Time.now.to_i
           delay = 86400 - (now - dailytime)
 
-
           if delay < 0
-            new_money = money + 1000
+            new_money = money + 500
             trader.update(money: new_money)
             trader.update(daily_time: now)
             event.channel.send_embed do |embed|
               embed.color = '56C114'
-              embed.description = "You have received :moneybag: 1,000!!"
+              embed.description = "You have received :moneybag: 500 in your account!!"
             end
           else
             x = delay / 3600
@@ -114,7 +115,7 @@ Ask `codemonkey#2455`!
             end
           end
         when "search"
-          return if invalid(event,args,2,"show <symbol>")
+          return if invalid(event,args,2,"search <symbol>")
           quote = td_client.symbol_search(symbol: args[1]).parsed_body
           if quote[:data].nil?
             event.channel.send_embed do |embed|
@@ -149,12 +150,28 @@ Ask `codemonkey#2455`!
             end
           end
         when "buy"
+          return if invalid(event,args,3,"buy <symbol> <amount>")
+          trader = Database::Trader.account(event.user.id)
+          return if no_account(event,trader,nil)
+
           event.channel.send_message "Stop. Feature not implemented."
         when "sell"
+          return if invalid(event,args,3,"sell <symbol> <amount>")
+          trader = Database::Trader.account(event.user.id)
+          return if no_account(event,trader,nil)
           event.channel.send_message "Stop. Feature not implemented."
         when "close"
+          return if invalid(event,args,3,"close <id>")
+          trader = Database::Trader.account(event.user.id)
+          return if no_account(event,trader,nil)
           event.channel.send_message "Stop. Feature not implemented."
-        when "balance"
+        when "closeall"
+          trader = Database::Trader.account(event.user.id)
+          return if no_account(event,trader,nil)
+          trader = Database::Trader.account(event.user.id)
+          return if no_account(event,trader,nil)
+          event.channel.send_message "Stop. Feature not implemented."
+        when "balance","bal"
           msgBot = event.channel.send_embed do |embed|
             embed.color = 'FF8400'
             embed.description = "Fetching account balance..."
@@ -165,13 +182,23 @@ Ask `codemonkey#2455`!
           event.channel.send_embed do |embed|
             embed.color = '008CFF'
             embed.add_field name: "Balance", value: ":dollar: #{trader.money}"
+            embed.author = Discordrb::Webhooks::EmbedAuthor.new(
+                    name: event.author.display_name,
+                    icon_url: event.author.avatar_url
+                )
           end
         when "list"
+          trader = Database::Trader.account(event.user.id)
+          return if no_account(event,trader,nil)
           event.channel.send_message "Stop. Feature not implemented."
-        when "leaderboard"
-          event.channel.send_message "Stop. Feature not implemented."
+        when "top"
+          event.channel.send_message(
+          "",
+          false,
+          Database::Trader.leaderboard(event.author.id)
+        )
         else
-          event.channel.send_message "What do you mean?"
+          event.channel.send_message "What do you mean by that?"
       end
       return
     end
