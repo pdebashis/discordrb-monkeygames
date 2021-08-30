@@ -11,17 +11,36 @@ module Bot
     "dharamx" => ["who_calls_the_crystal_maiden.mp3"]
   }
 
+  def self.get_price(price)
+    price.to_f
+  end
+
     def self.run(bot)
       scheduler = Rufus::Scheduler.new
       $lastPlayed = Time.now - 50
   
-      scheduler.every '1m' do
+      scheduler.every '2m' do
         send_today=Database::Reminder.where{Sequel[:message_date] < Time.now}
         data={}
         send_today.each do |pm_user|
           data['id']=pm_user.discord_id
           Discordrb::User.new(data,BOT).pm(":speech_balloon: | You have a message for yourself from the past \n`" + pm_user.message_content + "`")
           pm_user.destroy
+        end 
+      end
+
+      scheduler.every '3h' do
+        config = OpenStruct.new YAML.load_file 'data/config.yaml'
+        td_client = TwelvedataRuby.client(apikey: config.twelvedata_token, connect_timeout: 300)
+        trades=Database::Trade.all
+        trades.each do |t|
+          sym = t.symbol
+          quote = td_client.quote(symbol: sym).parsed_body
+          next if quote[:exchange].nil?
+          price = get_price(quote[:previous_close])
+          curr_price = t.vol * price
+          pnl = curr_price - t.buyprice
+          t.update(pnl: pnl)
         end
       end
 

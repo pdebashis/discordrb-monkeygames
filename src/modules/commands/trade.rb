@@ -34,7 +34,6 @@ module Bot
       return true
     end
 
-
     tutorial = """
 🗳 **__How to Trade__** *(Under Development)*  
        
@@ -63,15 +62,10 @@ Ask `codemonkey#2455`!
 
       case args[0]
         when "init"
-          msgBot = event.channel.send_embed do |embed|
-            embed.color = 'FF8400'
-            embed.description = "Creating account..."
-          end
           trader = Database::Trader.account(event.user.id)
           initBal = 10000
         
           if (trader)
-            msgBot.delete
             event.channel.send_embed do |embed|
               embed.color = 'FF0000'
               embed.description = "You have already initialized your account!"
@@ -83,7 +77,6 @@ Ask `codemonkey#2455`!
               nick_name: event.user.display_name,
               server_id: event.server.id
             )
-            msgBot.delete
             event.channel.send_embed do |embed|
               embed.color = '56C114'
               embed.description = "Your account has been created!"
@@ -149,28 +142,101 @@ Ask `codemonkey#2455`!
               embed.add_field name: "Price", value: ":dollar: #{get_price(quote[:previous_close])}"
             end
           end
-        when "buy"
-          return if invalid(event,args,3,"buy <symbol> <amount>")
+        when "buy","sell"
+          return if invalid(event,args,3,"buy/sell <symbol> <amount>")
           trader = Database::Trader.account(event.user.id)
           return if no_account(event,trader,nil)
 
-          event.channel.send_message "Stop. Feature not implemented."
-        when "sell"
-          return if invalid(event,args,3,"sell <symbol> <amount>")
-          trader = Database::Trader.account(event.user.id)
-          return if no_account(event,trader,nil)
-          event.channel.send_message "Stop. Feature not implemented."
+          if trader.trades.size > 9
+            event.channel.send_embed do |embed|
+              embed.color = 'FF0000'
+              embed.description = "Order Denied! (too many open positions in account)"
+            end
+            return
+          end
+
+          symb = args[1]
+          amount = args[2].to_i
+          unless symb.match(/^([A-Za-z\/])+$/) and amount.to_s.match(/^(\d)+$/)
+            return event.channel.send_message "Your command broke me!!!"
+          end
+          money = trader.money
+          if money < amount
+            event.channel.send_embed do |embed|
+              embed.color = 'FF0000'
+              embed.description = "Payment Refused! (You don't have enough funds)"
+            end
+            return
+          end
+          quote = td_client.quote(symbol: symb).parsed_body
+          if quote[:exchange].nil?
+            event.channel.send_embed do |embed|
+              embed.color = 'FF0000'
+              embed.description = "An error occurred (The symbol didn't fetch any stocks)"
+            end
+          else
+            price = get_price(quote[:previous_close]).to_f
+            vol = amount.to_f / price
+            trade_entry = Database::Trade.create(
+              trader_id: trader.id,
+              type: args[0],
+              symbol: symb,
+              vol: vol,
+              buyprice: amount.to_f
+            )
+
+            trader.add_trade trade_entry
+
+            trader.update(money: money-amount)
+            event.channel.send_embed do |embed|
+              embed.color = '56C114'
+              embed.title = "Order Executed!"
+              embed.description = "__Debit Amount__: #{amount}"
+            end
+          end
         when "close"
-          return if invalid(event,args,3,"close <id>")
+          return if invalid(event,args,2,"close <id>")
           trader = Database::Trader.account(event.user.id)
           return if no_account(event,trader,nil)
-          event.channel.send_message "Stop. Feature not implemented."
+          return event.channel.send_message "You don't own any share!" if trader.trades.size.zero?
+
+          id = args[1].to_i
+          t = trader.trades.find{ |t| t.id == id }
+
+          account_balance = trader.money
+          selling_price = t.buyprice + t.pnl
+
+          t.destroy
+          trader.update(money: account_balance + selling_price)
+
+          event.channel.send_embed do |embed|
+            embed.color = '56C114'
+            embed.title = "Order Executed!"
+            embed.description = "__Credit Amount__: #{selling_price}"
+          end  
+
         when "closeall"
           trader = Database::Trader.account(event.user.id)
           return if no_account(event,trader,nil)
-          trader = Database::Trader.account(event.user.id)
-          return if no_account(event,trader,nil)
-          event.channel.send_message "Stop. Feature not implemented."
+          return event.channel.send_message "You don't own any share!" if trader.trades.size.zero?
+
+          account_balance = trader.money
+          selling_price = 0
+          trader.trades.each do |t|
+            selling_price += t.buyprice + t.pnl
+          end
+
+          trader.trades.each do |t|
+            t.destroy
+          end
+          trader.update(money: account_balance + selling_price)
+
+          event.channel.send_embed do |embed|
+            embed.color = '56C114'
+            embed.title = "Order Executed!"
+            embed.description = "__Credit Amount__: #{selling_price}"
+          end  
+
         when "balance","bal"
           msgBot = event.channel.send_embed do |embed|
             embed.color = 'FF8400'
@@ -182,15 +248,25 @@ Ask `codemonkey#2455`!
           event.channel.send_embed do |embed|
             embed.color = '008CFF'
             embed.add_field name: "Balance", value: ":dollar: #{trader.money}"
-            embed.author = Discordrb::Webhooks::EmbedAuthor.new(
-                    name: event.author.display_name,
-                    icon_url: event.author.avatar_url
-                )
           end
         when "list"
           trader = Database::Trader.account(event.user.id)
           return if no_account(event,trader,nil)
-          event.channel.send_message "Stop. Feature not implemented."
+          return event.channel.send_message "You don't own any share!" if trader.trades.size.zero?
+
+          embed = Discordrb::Webhooks::Embed.new
+          embed.title = "Trades of #{trader.nick_name}"
+          embed.color = '008CFF'
+
+          trader.trades.each do |t|
+            embed.add_field name: "#{t.type.upcase} - #{t.symbol} (ID: #{t.id})", value: "__Volume__: #{t.vol}\n __P/L__: #{t.pnl}\n __Order Placed__: #{t.timestamp}"
+          end
+
+          event.channel.send_message(
+            "",
+            false,
+            embed
+          )
         when "top"
           event.channel.send_message(
           "",

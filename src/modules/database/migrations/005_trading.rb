@@ -7,17 +7,19 @@ Sequel.migration do
         String :discord_name
         String :nick_name
         Integer :server_id
-        Integer :money, default: 10000
+        Float :money, default: 10000
         Integer :daily_time, default: 0
       end
   
       create_table(:trades) do
         primary_key :id
         DateTime :timestamp
-        foreign_key :discord_id, :traders, on_delete: :cascade
+        foreign_key :trader_id, :traders, on_delete: :cascade
         String :type
         String :symbol
-        String :price
+        Float :vol
+        Float :buyprice
+        Float :pnl, default: 0
       end
     end
   

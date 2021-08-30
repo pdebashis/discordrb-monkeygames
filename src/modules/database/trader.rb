@@ -1,7 +1,6 @@
 module Bot
   module Database
     class Trader < Sequel::Model
-      one_to_one :traders
       one_to_many :trades
 
       def before_create
@@ -28,7 +27,19 @@ module Bot
         embed.add_field name: 'Balance', value: pl.collect(&:money).join("\n"), inline: true
         embed
       end
+    end
+  end
+end
 
+module Bot
+  module Database
+    class Trade < Sequel::Model
+      many_to_one :traders
+
+      def before_create
+        super
+        self.timestamp ||= Time.now
+      end
     end
   end
 end
