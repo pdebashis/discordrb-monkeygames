@@ -245,9 +245,17 @@ Ask `codemonkey#2455`!
           trader = Database::Trader.account(event.user.id)
           return if no_account(event,trader,msgBot)
           msgBot.delete
+          selling_price = 0
+          pnl_price = 0
+          trader.trades.each do |t|
+            selling_price += t.buyprice
+            pnl_price += t.pnl
+          end
+
           event.channel.send_embed do |embed|
             embed.color = '008CFF'
-            embed.add_field name: "Balance", value: ":dollar: #{trader.money}"
+            embed.add_field name: "Account Balance", value: ":dollar: #{trader.money}"
+            embed.add_field name: "Current Trades", value: ":dollar: #{selling_price} (Profit: #{pnl_price})"
           end
         when "list"
           trader = Database::Trader.account(event.user.id)
