@@ -36,10 +36,7 @@ module Bot
 
         final = users.sort_by {|_key, value| value}.last(5).reverse
 
-        ladder = (1..final.size).to_a.join "\n"
-        embed.add_field name: '#', value: ladder, inline: true
-        embed.add_field name: 'Name', value: final.collect{ |t| t[0].nick_name }.join("\n"), inline: true
-        embed.add_field name: 'Balance', value: final.collect(&:last).join("\n"), inline: true
+        embed.add_field name: 'Name', value: final.collect.with_index{ |t,i| "#{i+1}. `#{t[0].nick_name}` " + "(#{t.last.round(2)})" }.join("\n"), inline: true
         embed
       end
     end

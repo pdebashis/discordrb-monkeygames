@@ -39,8 +39,9 @@ module Bot
           next if quote[:exchange].nil?
           price = get_price(quote[:previous_close])
           curr_price = t.vol * price
-          pnl = t.type == 'BUY'? curr_price - t.buyprice : t.buyprice - curr_price
+          pnl = t.type == 'buy'? curr_price - t.buyprice : t.buyprice - curr_price
           t.update(pnl: pnl)
+          sleep 12
         end
       end
 

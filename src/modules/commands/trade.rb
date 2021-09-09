@@ -35,7 +35,7 @@ module Bot
     end
 
     tutorial = """
-🗳 **__How to Trade__** *(Under Development)*  
+🗳 **__How to Trade__** 
        
 :writing_hand: **Available Commands**  
 `\\trade help` - Display this help
@@ -92,12 +92,13 @@ Ask `codemonkey#2455`!
           delay = 86400 - (now - dailytime)
 
           if delay < 0
-            new_money = money + 500
+            bonus = rand(100..500)
+            new_money = money + bonus
             trader.update(money: new_money)
             trader.update(daily_time: now)
             event.channel.send_embed do |embed|
               embed.color = '56C114'
-              embed.description = "You have received :moneybag: 500 in your account!!"
+              embed.description = "You have received :moneybag: #{bonus} in your account!!"
             end
           else
             x = delay / 3600
