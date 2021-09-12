@@ -39,7 +39,7 @@ module Bot
        
 :writing_hand: **Available Commands**  
 `\\trade help` - Display this help
-`\\trade init` - initialize an account with start amount X
+`\\trade init` - initialize an account with start amount 10,000
 `\\trade daily` - get free resources
    
 `\\trade search` - get symbol for a company
@@ -140,7 +140,7 @@ Ask `codemonkey#2455`!
             event.channel.send_embed do |embed|
               embed.color = '008CFF'
               embed.add_field name: "#{quote[:exchange]}", value: "#{quote[:name]}"
-              embed.add_field name: "Price", value: ":dollar: #{get_price(quote[:previous_close])}"
+              embed.add_field name: "Price", value: ":dollar: #{get_price(quote[:close])}"
             end
           end
         when "buy","sell"
@@ -176,7 +176,7 @@ Ask `codemonkey#2455`!
               embed.description = "An error occurred (The symbol didn't fetch any stocks)"
             end
           else
-            price = get_price(quote[:previous_close]).to_f
+            price = get_price(quote[:close]).to_f
             vol = amount.to_f / price
             trade_entry = Database::Trade.create(
               trader_id: trader.id,

@@ -29,7 +29,7 @@ module Bot
         end 
       end
 
-      scheduler.every '3h' do
+      scheduler.every '2h' do
         config = OpenStruct.new YAML.load_file 'data/config.yaml'
         td_client = TwelvedataRuby.client(apikey: config.twelvedata_token, connect_timeout: 300)
         trades=Database::Trade.all
@@ -37,7 +37,7 @@ module Bot
           sym = t.symbol
           quote = td_client.quote(symbol: sym).parsed_body
           next if quote[:exchange].nil?
-          price = get_price(quote[:previous_close])
+          price = get_price(quote[:close])
           curr_price = t.vol * price
           pnl = t.type == 'buy'? curr_price - t.buyprice : t.buyprice - curr_price
           t.update(pnl: pnl)
