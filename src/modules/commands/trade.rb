@@ -24,9 +24,8 @@ module Bot
       false
     end
 
-    def self.no_account(event,trader,msg)
+    def self.no_account(event,trader)
       return false if trader
-      msg.delete if msg
       event.channel.send_embed do |embed|
         embed.color = 'FF0000'
         embed.description = "You have not initialized an Account!"
@@ -84,7 +83,7 @@ Ask `codemonkey#2455`!
           end
         when "daily"
           trader = Database::Trader.account(event.user.id)
-          return if no_account(event,trader,nil)
+          return if no_account(event,trader)
 
           money = trader.money
           dailytime = trader.daily_time
@@ -96,6 +95,10 @@ Ask `codemonkey#2455`!
             new_money = money + bonus
             trader.update(money: new_money)
             trader.update(daily_time: now)
+
+            event.channel.start_typing
+            sleep 1
+
             event.channel.send_embed do |embed|
               embed.color = '56C114'
               embed.description = "You have received :moneybag: #{bonus} in your account!!"
@@ -117,6 +120,8 @@ Ask `codemonkey#2455`!
               embed.description = "An error occurred (the request to the service may have been unsuccessful)"
             end
           else
+            event.channel.start_typing
+            sleep 1
             size = quote[:data].size
             desc = "\n"
             quote[:data].each_with_index do |x,i|
@@ -137,6 +142,8 @@ Ask `codemonkey#2455`!
               embed.description = "An error occurred (the request to the service may have been unsuccessful)"
             end
           else
+            event.channel.start_typing
+            sleep 1
             event.channel.send_embed do |embed|
               embed.color = '008CFF'
               embed.add_field name: "#{quote[:exchange]}", value: "#{quote[:name]}"
@@ -146,7 +153,7 @@ Ask `codemonkey#2455`!
         when "buy","sell"
           return if invalid(event,args,3,"buy/sell <symbol> <amount>")
           trader = Database::Trader.account(event.user.id)
-          return if no_account(event,trader,nil)
+          return if no_account(event,trader)
 
           if trader.trades.size > 9
             event.channel.send_embed do |embed|
@@ -198,7 +205,7 @@ Ask `codemonkey#2455`!
         when "close"
           return if invalid(event,args,2,"close <id>")
           trader = Database::Trader.account(event.user.id)
-          return if no_account(event,trader,nil)
+          return if no_account(event,trader)
           return event.channel.send_message "You don't own any share!" if trader.trades.size.zero?
 
           id = args[1].to_i
@@ -218,7 +225,7 @@ Ask `codemonkey#2455`!
 
         when "closeall"
           trader = Database::Trader.account(event.user.id)
-          return if no_account(event,trader,nil)
+          return if no_account(event,trader)
           return event.channel.send_message "You don't own any share!" if trader.trades.size.zero?
 
           account_balance = trader.money
@@ -239,13 +246,12 @@ Ask `codemonkey#2455`!
           end  
 
         when "balance","bal"
-          msgBot = event.channel.send_embed do |embed|
-            embed.color = 'FF8400'
-            embed.description = "Fetching account balance..."
-          end
+          event.channel.start_typing
+          sleep 1
+
           trader = Database::Trader.account(event.user.id)
-          return if no_account(event,trader,msgBot)
-          msgBot.delete
+          return if no_account(event,trader)
+
           selling_price = 0
           pnl_price = 0
           trader.trades.each do |t|
@@ -260,8 +266,11 @@ Ask `codemonkey#2455`!
           end
         when "list"
           trader = Database::Trader.account(event.user.id)
-          return if no_account(event,trader,nil)
+          return if no_account(event,trader)
           return event.channel.send_message "You don't own any share!" if trader.trades.size.zero?
+
+          event.channel.start_typing
+          sleep 1
 
           embed = Discordrb::Webhooks::Embed.new
           embed.title = "Trades of #{trader.nick_name}"
@@ -277,6 +286,8 @@ Ask `codemonkey#2455`!
             embed
           )
         when "top"
+          event.channel.start_typing
+          sleep 1
           event.channel.send_message(
           "",
           false,

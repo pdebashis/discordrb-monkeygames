@@ -26,7 +26,7 @@ module Bot
             options = all_args[2..-1]
             raise Exception.new("You must specify a maximum of twenty options in order to create the poll.") if options.length > 20
 
-            event.message.delete
+            event.message.delete if bot_profile.permission?(:manage_messages, event.channel)
 
             layout = REACTIONS[type]
             raise Exception.new("This type of reaction is invalid") if layout.nil?
