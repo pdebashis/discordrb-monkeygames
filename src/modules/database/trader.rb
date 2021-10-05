@@ -34,7 +34,7 @@ module Bot
           users[p] = p.total_balance
         end
 
-        final = users.sort_by {|_key, value| value}.last(5).reverse
+        final = users.sort_by {|_key, value| value}.last(10).reverse
 
         embed.add_field name: 'Name', value: final.collect.with_index{ |t,i| "#{i+1}. `#{t[0].nick_name}` " + "(#{t.last.round(2)})" }.join("\n"), inline: true
         embed

@@ -26,6 +26,7 @@ module Bot
             options = all_args[2..-1]
             raise Exception.new("You must specify a maximum of twenty options in order to create the poll.") if options.length > 20
 
+            bot_profile = Bot::BOT.profile.on(event.server)
             event.message.delete if bot_profile.permission?(:manage_messages, event.channel)
 
             layout = REACTIONS[type]
