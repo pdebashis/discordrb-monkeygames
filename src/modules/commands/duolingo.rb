@@ -32,41 +32,41 @@ command(:duolingo) do |event, *args|
 
     if args.empty? or args[0].include?("help") or args[0].eql?("h")
         event.channel.send_message tutorial
+        return "***:bird: :bird: :bird:***"
+        return 
       end
 
   case args[0]
     when "init"
-    return if invalid(event,args,2,"init <username>")
-    lingo = Database::Lingo.account(event.user.id)
+      return if invalid(event,args,2,"init <username>")
+      lingo = Database::Lingo.account(event.user.id)
 
-    url = "http://www.duolingo.com/users/#{args[1]}"
-    unparsed_page = HTTParty.get(url)
-    parsed_page ||= Nokogiri::HTML(unparsed_page.body)
+      url = "http://www.duolingo.com/users/#{args[1]}"
+      unparsed_page = HTTParty.get(url)
+      parsed_page ||= Nokogiri::HTML(unparsed_page.body)
   
-    if (lingo)
-      event.channel.send_embed do |embed|
-        embed.color = 'FF0000'
-        embed.description = "You have already initialized your account!"
-      end
-    else
-      account = Database::Lingo.create(
+      if (lingo)
+        event.channel.send_embed do |embed|
+          embed.color = 'FF0000'
+          embed.description = "You have already initialized your account!"
+        end
+      else
+        account = Database::Lingo.create(
         discord_id: event.user.id,
         discord_name: event.user.distinct,
         nick_name: event.user.display_name,
         server_id: event.server.id,
-        dl_username: args[1]
-      )
-      event.channel.send_embed do |embed|
+        dl_username: args[1])
+        event.channel.send_embed do |embed|
         embed.color = '56C114'
         embed.description = "Your account has been registered!"
+        end
       end
-    end
-    
     else
     event.channel.send_message "What do you mean by that?"
+    end
   end
 end
 
-end
 end
 end
