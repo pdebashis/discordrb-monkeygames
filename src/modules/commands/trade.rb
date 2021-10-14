@@ -108,7 +108,7 @@ Ask `codemonkey#2455`!
             y = (delay - x*3600) / 60
             event.channel.send_embed do |embed|
               embed.color = '56C114'
-              embed.description = "You are eligible for daily bonus after `#{x}h#{y}m`!!"
+              embed.description = "Please don't bother me again for `#{x}h#{y}m`!!"
             end
           end
         when "search"

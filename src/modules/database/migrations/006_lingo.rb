@@ -7,9 +7,10 @@ Sequel.migration do
         String :discord_name
         String :nick_name
         Integer :server_id
-        Float :dl_username
+        String :dl_username
         Integer :xp, default: 0
         Integer :points, default: 0
+        Integer :daily_time, default: 0
       end
     end
   

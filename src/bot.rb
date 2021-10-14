@@ -5,6 +5,7 @@ require 'discordrb'
 require 'ostruct'
 require 'date'
 require 'yaml'
+require 'json'
 
 Bundler.require(:default)
 
