@@ -38,6 +38,10 @@ module Lingorb
     def find_user username
         user_url = "#{DUOLINGO_API_VERSION}/users?username=%s" % username
         res = @conn.get user_url
+        return User.new if res.nil?
+        body = JSON.parse(res.body)
+        return User.new if body["failure"]
+
         user = User.new(JSON.parse(res.body), @conn)
     end
   end
