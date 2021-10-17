@@ -90,7 +90,7 @@ Ask `codemonkey#2455`!
           now = Time.now.to_i
           delay = 86400 - (now - dailytime)
 
-          if delay < 0
+          if delay <= 60
             bonus = rand(100..300)
             new_money = money + bonus
             trader.update(money: new_money)

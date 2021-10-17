@@ -14,6 +14,15 @@ module Bot
         false
     end
 
+    def self.no_account(event,linguist)
+      return false if linguist
+      event.channel.send_embed do |embed|
+        embed.color = 'FF0000'
+        embed.description = "You have not initialized an Account!"
+      end
+      return true
+    end
+
     CONFIG = OpenStruct.new YAML.load_file 'data/config.yaml'
     USERNAME=CONFIG.duolingouser
     KEY=CONFIG.duolingokey
@@ -56,7 +65,7 @@ command(:duolingo) do |event, *args|
           embed.color = 'FF0000'
           embed.description = "You have already initialized your account!"
         end
-      elsif(user.id.nil?)
+      elsif(user.nil?)
         event.channel.send_embed do |embed|
           embed.color = 'FF0000'
           embed.description = "Username not found!"
@@ -76,12 +85,60 @@ command(:duolingo) do |event, *args|
       end
     when "profile"
       lingo = Database::Lingo.account(event.user.id)
+      return if no_account(event,lingo)
 
       user = duolingo_client.find_user lingo.dl_username
 
       event.channel.send_embed do |embed|
         embed.colour = 0xff8040
-        embed.add_field name: "**#{lingo.dl_username}** (`#{user.learning_language}`)\n", value: "**XP**    : #{lingo.xp}\n**Points**    : #{lingo.points}\n**Streak**: #{user.streak}\n"
+        embed.add_field name: "**#{lingo.nick_name}**", value: 
+                "**Language** : #{user.learning_language}
+                **XP**    : #{lingo.xp}
+                **Points**    : #{lingo.points}
+                **Streak**: #{user.streak} days"
+      end
+    when "daily"
+      linguist = Database::Lingo.account(event.user.id)
+      return if no_account(event,linguist)
+
+      user = duolingo_client.find_user linguist.dl_username
+
+      prev_xp = linguist.xp
+      dailytime = linguist.daily_time
+      now = Time.now.to_i
+      delay = 43200 - (now - dailytime)
+
+      if delay <= 60
+        new_xp = user.xp
+        prev_point = linguist.points
+        diff = new_xp - prev_xp
+        if diff < 1
+          event.channel.send_embed do |embed|
+            embed.color = 'FF0000'
+            embed.description = "You have not made any progress!!"
+          end
+        else
+          points = diff > 30 ? 2 : 1
+          new_point = prev_point + points
+          linguist.update(xp: new_xp)
+          linguist.update(points: new_point)
+          linguist.update(daily_time: now)
+
+          event.channel.start_typing
+          sleep 1
+
+          event.channel.send_embed do |embed|
+            embed.color = '56C114'
+            embed.description = "Your Submission is successful (XP : +#{diff},Score : +#{points})!!"
+          end
+        end
+      else
+        x = delay / 3600
+        y = (delay - x*3600) / 60
+        event.channel.send_embed do |embed|
+          embed.color = '56C114'
+          embed.description = "You can try again in `#{x}h#{y}m`!!"
+        end
       end
     else
     event.channel.send_message "What do you mean by that?"
