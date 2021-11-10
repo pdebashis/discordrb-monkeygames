@@ -140,6 +140,12 @@ command(:duolingo) do |event, *args|
           embed.description = "You can try again in `#{x}h#{y}m`!!"
         end
       end
+    when "top"
+      event.channel.send_message(
+          "",
+          false,
+          Database::Lingo.leaderboard(event.author.id)
+        )
     else
     event.channel.send_message "What do you mean by that?"
     end
