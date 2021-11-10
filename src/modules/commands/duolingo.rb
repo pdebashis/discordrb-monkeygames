@@ -50,7 +50,6 @@ command(:duolingo) do |event, *args|
     if args.empty? or args[0].include?("help") or args[0].eql?("h")
         event.channel.send_message tutorial
         return "***:bird: :bird: :bird:***"
-        return 
       end
 
   case args[0]
@@ -119,6 +118,8 @@ command(:duolingo) do |event, *args|
           end
         else
           points = diff > 30 ? 2 : 1
+          points += diff / 100
+
           new_point = prev_point + points
           linguist.update(xp: new_xp)
           linguist.update(points: new_point)
