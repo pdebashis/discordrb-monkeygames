@@ -5,9 +5,12 @@ client_id:
 # Discord and other API tokens
 token: 
 twelvedata_token:
+duolingouser: 
+duolingokey: 
+
 
 # Command prefix
-prefix:
+prefix: \
 
 # ID of bot owner
 owner:
