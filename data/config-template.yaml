@@ -5,8 +5,8 @@ client_id:
 # Discord and other API tokens
 token: 
 twelvedata_token:
-duolingouser: 
-duolingokey: 
+duolingouser: deprecated
+duolingokey: deprecated
 
 
 # Command prefix
@@ -16,4 +16,4 @@ prefix: \
 owner:
 
 # game the bot is playing
-game:
+game: monkeygames
