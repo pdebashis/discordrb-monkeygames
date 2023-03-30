@@ -44,7 +44,7 @@ module Bot::DiscordCommands
         to_disconnect = true
       end
       voice.play_file(sound_file)
-      Bot::BOT.voice_destroy(event.server) if to_disconnect
+      #Bot::BOT.voice_destroy(event.server) if to_disconnect
     end
 
   end

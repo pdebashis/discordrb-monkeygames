@@ -47,7 +47,7 @@ module Bot
         end
       end
 
-      Bot::BOT.voice_state_update(from: not!(["Monkey Games","Rythm"])) do |event|
+      Bot::BOT.voice_state_update(from: not!(["Monkey Games"])) do |event|
         voice = Bot::BOT.voice(event.server)
         event.user.extend(UserTimeout)
         # Minute delay for the individual user switching, 15 seconds for any user, to prevent spamming
@@ -57,9 +57,9 @@ module Bot
           voice = Bot::BOT.voice_connect(event.channel)
           sleep 1
           if Songs[event.user.name]
-            voice.play_file("sounds/#{Songs[event.user.name].sample}")
+            voice.play_file("data/sounds/#{Songs[event.user.name].sample}")
           else
-            voice.play_file("sounds/#{Songs['shuffle'].sample}")
+            voice.play_file("data/sounds/#{Songs['shuffle'].sample}")
           end
         end
       end
